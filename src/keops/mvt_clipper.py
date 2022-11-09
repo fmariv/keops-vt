@@ -1,4 +1,6 @@
-from argparse import ArgumentParser
+"""Clip vector tiles from a MBTiles file using a given geoJSON file as a mask"""
+
+import click
 
 from mvt_reader import MVTReader
 
@@ -10,31 +12,24 @@ class MVTClipper:
         self.mask_file = mask_file
 
 
-def get_arguments():
+@click.group()
+def keops():
     """
-    Get and parse the arguments given by the user
-    :return: Parsed arguments
-    """
-    parser = ArgumentParser(description="Clip the vector tiles inside a MBTiles by a mask")
-    parser.add_argument('mbtiles',
-                        help="MBTiles path",
-                        nargs='?',
-                        default='no',
-                        type=str
-                        ) 
-    parser.add_argument('mask',
-                        help="Mask file path",
-                        nargs='?',
-                        default='no',
-                        type=str
-                        )            
 
-    arguments = parser.parse_args()
-    return vars(arguments)
+    """
+    pass
+
+@keops.command()
+@keops.argument('mbtiles', type=click.Path(exists=True))
+@keops.argument('geojson', type=click.Path(exists=True))
+def clip(mbtiles, geojson):
+    """
+    Clip vector tiles in a MBTiles with a geoJSON file
+    """
+    mvt_reader = MVTReader(mbtiles)
+    tiles = mvt_reader.get_decoded_tiles()
+    mvt_clipper = MVTClipper(tiles, geojson)
 
 
 if __name__ == '__main__':
-    args = get_arguments()
-    mvt_reader = MVTReader(args['mbtiles'])
-    tiles = mvt_reader.get_decoded_tiles()
-    mvt_clipper = MVTClipper(tiles, args['mask'])
+    passgg
