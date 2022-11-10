@@ -13,8 +13,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        keops = keops.main:main_group
-        [keops.keops_commands]
-        clip = keops.clip:clip
+        keops=keops.main:main_group
     ''',
 )
