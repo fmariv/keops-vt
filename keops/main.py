@@ -22,4 +22,4 @@ import click
 @click.group()
 @click.pass_context
 def main_group():
-    """Keops CLI"""
+    """Keops command line interface"""

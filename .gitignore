@@ -1,3 +1,5 @@
 .idea
 dist/
 env/
+keops.egg-info/
+__pycache__/
