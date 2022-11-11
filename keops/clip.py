@@ -6,12 +6,14 @@ from .src.mvt_reader import MVTReader
 from .src.mvt_clipper import MVTClipper
 
 
-@click.command()
-@click.argument('mbtiles', type=click.Path(exists=True))
-@click.argument('geojson', type=click.Path(exists=True))
+@click.command(short_help='Clip vector tiles to given geoJSON')
+@click.argument('mbtiles', type=click.Path(exists=True), required=True)
+@click.argument('geojson', type=click.Path(exists=True), required=True)
 def clip(mbtiles, geojson):
-    """
-    Clip vector tiles in a MBTiles with a geoJSON file
+    """Clips vector tiles in a MBTiles using a geoJSON file.
+
+    $ keops clip input.mbtiles bounds.geojson
+
     """
     mvt_reader = MVTReader(mbtiles)
     tiles = mvt_reader.get_decoded_tiles()

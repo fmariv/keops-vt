@@ -18,8 +18,16 @@ Keops' ``setup.py``:
 
 import click
 
+from .clip import clip
+
 
 @click.group()
-@click.pass_context
 def main_group():
     """Keops command line interface"""
+    pass
+
+
+commands = [clip]
+
+for command in commands:
+    main_group.add_command(command)

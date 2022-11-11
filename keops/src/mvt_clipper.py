@@ -2,7 +2,7 @@
 
 import click
 
-from mvt_reader import MVTReader
+from .mvt_reader import MVTReader
 
 
 class MVTClipper:

@@ -9,10 +9,10 @@ setup(
     install_requires=[
         'Click',
     ],
+    package_dir={"": "."},
+    packages=["keops"],
     entry_points='''
         [console_scripts]
         keops=keops.main:main_group
-        [keops.keops_commands]
-        clip = keops.clip:clip
     ''',
 )
