@@ -13,11 +13,7 @@ def check_geojson_is_valid(geojson_mask):
         print('Mask file is not a geoJSON')
         return False
 
-    # Check geoJSON is valid
-    geojson_df = gpd.read_file(geojson_mask)
-    if not geojson_df.is_valid():
-        print('GeoJSON file is not valid')
-        return False
+    # TODO check geoJSON is valid
 
     # TODO check geoJSON bounds with MBTiles
 

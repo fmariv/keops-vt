@@ -19,7 +19,7 @@ class MVTClipper:
         """
         geojson_mask_gdf = gpd.read_file(geojson_mask)
 
-        if not geojson_mask_gdf.crs == 'EPSG:3857':   # TODO test
+        if not geojson_mask_gdf.crs == 'epsg:3857':
             geojson_mask_gdf = translate_geojson_crs(geojson_mask_gdf)
 
         return geojson_mask_gdf

@@ -16,6 +16,14 @@ class MVTReader():
         # TODO quit False argument, use another function instead
         """
         Query and return the features of the MBTiles
+
+        Estructure of the tiles
+        for tile in tiles:
+            tile[0] = zoom
+            tile[1] = x column
+            tile[2] = y column
+            tile[3] = encoded data
+
         :param: size_limit: indicates if the there is a size constraint
         in the query
         :return: tiles: tuple containing data in the MBTiles
@@ -45,6 +53,17 @@ class MVTReader():
     def get_decoded_tiles(self, size_limit=False) -> list:
         """
         Query, decode and return the features of the MBTiles
+
+        Estructure of the decoded tiles
+        for tile in tiles:
+            tile[0] = zoom
+            tile[1] = x column
+            tile[2] = y column
+            tile[3] = decoded data
+            for layer, layer_data in tile[3].items():
+                layer = layer name
+                layer_data = geojson
+
         :param: size_limit: indicates if the there is a size constraint
         in the query
         :return: tiles: tuple containing decoded data in the MBTiles

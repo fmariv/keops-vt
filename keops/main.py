@@ -19,7 +19,7 @@ def main_group():
 
 # In order to add commands to the group, just import
 # and add them to the commands list
-commands = (clip)
+commands = [clip]
 
 for command in commands:
     main_group.add_command(command)
