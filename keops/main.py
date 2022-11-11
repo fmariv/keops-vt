@@ -2,17 +2,7 @@
 Main command group for Keops' CLI.
 
 Subcommands developed as a part of the Keops package have their own
-modules under ``keops`` (like ``keops/clip.py``) and are
-registered in the 'keops.keops_commands' entry point group in
-Keops' ``setup.py``:
-
-    entry_points='''
-        [console_scripts]
-        keops=keops.main:main_group
-
-        [keops.keops_commands]
-        clip=keops.clip:clip
-        ...
+modules under ``keops`` (like ``keops/clip.py``)
 
 """
 
@@ -27,7 +17,9 @@ def main_group():
     pass
 
 
-commands = [clip]
+# In order to add commands to the group, just import
+# and add them to the commands list
+commands = (clip)
 
 for command in commands:
     main_group.add_command(command)

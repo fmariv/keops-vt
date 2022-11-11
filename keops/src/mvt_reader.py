@@ -12,8 +12,8 @@ class MVTReader():
     def __init__(self, mbtiles: str):
         self.mbtiles = mbtiles
 
-
-    def get_tiles(self, size_limit=False) -> tuple:
+    def get_tiles(self, size_limit=False):
+        # TODO quit False argument, use another function instead
         """
         Query and return the features of the MBTiles
         :param: size_limit: indicates if the there is a size constraint
@@ -42,7 +42,7 @@ class MVTReader():
             print('There is no data or at least not too big tiles')
             return
 
-    def get_decoded_tiles(self, size_limit=False) -> tuple:
+    def get_decoded_tiles(self, size_limit=False) -> list:
         """
         Query, decode and return the features of the MBTiles
         :param: size_limit: indicates if the there is a size constraint
@@ -78,17 +78,18 @@ class MVTReader():
         return conn
 
     @staticmethod
-    def _get_tile_zxy(tile: tuple) -> list:
+    def _get_tile_zxy(tile: tuple) -> tuple:
         """
         Get the zoom level, tile column and 
         tile row
         :param: tile: Vector tile object
         :return: Zoom level, tile column and tile row
         """
-        return (tile[0], tile[1], tile[2])
+        zxy = (tile[0], tile[1], tile[2])
+        return zxy
 
     @staticmethod
-    def _get_tile_zxy_string(tile: tuple) -> list:
+    def _get_tile_zxy_string(tile: tuple) -> tuple:
         """
         Get the zoom level, tile column and tile row
         in string format
@@ -96,7 +97,8 @@ class MVTReader():
         :return: String with the zoom level, tile column
         and tile row
         """
-        return (f'{tile[0]}/{tile[1]}/{tile[2]}')
+        zxy = (f'{tile[0]}/{tile[1]}/{tile[2]}')
+        return zxy
 
     @staticmethod
     def _get_tile_data(tile: tuple) -> str:
