@@ -2,6 +2,9 @@
 
 import geopandas as gpd
 
+from shapely.geometry import LineString
+from shapely import wkt
+
 from .utils import translate_geojson_crs
 
 
@@ -24,10 +27,22 @@ class MVTClipper:
 
         return geojson_mask_gdf
 
+    def _tile_intersects_mask(self, tile):
+        """
+
+        :param tile:
+        :return:
+        """
+        pass
+
     def clip_mbtiles(self, tiles):
         """
 
         :param tiles:
         :return:
         """
+        for tile in tiles:
+            layer_data = tile[3]
+            for layer, data in layer_data.items():
+                features = data['features']
         return tiles

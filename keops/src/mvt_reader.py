@@ -6,11 +6,28 @@ import mapbox_vector_tile
 TILE_SIZE_LIMIT = 500
 
 
-class MVTReader():
+class MVTReader:
     """Read a MBTiles file and return its data, decoded or not"""
 
     def __init__(self, mbtiles: str):
         self.mbtiles = mbtiles
+        self.conn = self._get_conn()
+        self.cur = self._get_cur()
+
+    def _get_conn(self):
+        """
+
+        :return:
+        """
+        conn = self._create_connection(self.mbtiles)
+        return conn
+
+    def _get_cur(self):
+        """
+
+        :return:
+        """
+        return self.conn.cursor()
 
     def get_tiles(self, size_limit=False):
         # TODO quit False argument, use another function instead
@@ -28,8 +45,6 @@ class MVTReader():
         in the query
         :return: tiles: tuple containing data in the MBTiles
         """
-        conn = self._create_connection(self.mbtiles)
-        cur = conn.cursor()
 
         if size_limit:
             query = f'SELECT zoom_level, tile_column, tile_row, tile_data, length(tile_data) as size FROM tiles WHERE length(tile_data) > {TILE_SIZE_LIMIT * 1024} ORDER BY zoom_level, tile_column, tile_row ASC'
@@ -37,9 +52,9 @@ class MVTReader():
             query = 'SELECT zoom_level, tile_column, tile_row, tile_data FROM tiles'
 
         try:
-            cur.execute(query)
-            tiles = cur.fetchall()
-            conn.close()
+            self.cur.execute(query)
+            tiles = self.cur.fetchall()
+            self.conn.close()
         except Exception as e:
             print(e)
             return
