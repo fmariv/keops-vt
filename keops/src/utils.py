@@ -17,6 +17,8 @@ def check_geojson_is_valid(geojson_mask):
 
     # TODO check geoJSON bounds with MBTiles
 
+    # TODO check geoJSON is a polygon
+
     return True
 
 
