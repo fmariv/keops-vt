@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name="keops",
+    name="keops-tiles",
     version='0.0.1',
     description='CLI tool for custom edition and management of Mapbox Vector Tiles in MBTiles format',
     author='Fran Martín',
