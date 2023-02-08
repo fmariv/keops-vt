@@ -2,6 +2,8 @@ import sqlite3
 import gzip
 import mapbox_vector_tile
 
+from click import echo
+
 
 TILE_SIZE_LIMIT = 500
 
@@ -29,10 +31,60 @@ class MVTReader:
         """
         return self.conn.cursor()
 
-    def get_tiles(self, size_limit=False):
-        # TODO quit False argument, use another function instead
+    def _query(self, sql_query):
         """
-        Query and return the features of the MBTiles
+
+        :param sql_query:
+        :return:
+        """
+        try:
+            self.cur.execute(sql_query)
+            response = self.cur.fetchall()
+            self.conn.close()
+        except Exception as e:
+            echo(e)
+            return
+
+        return response
+
+    def get_tile_size(self, zxy):
+        """
+
+        :param zxy:
+        :return:
+        """
+        z, x, y = self._decode_zxy_string(zxy)
+        query = f'SELECT length(tile_data) as size FROM tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y}'
+
+        # Get the size in KB
+        tile_size = self._query(query) * 1024
+
+        if tile_size:
+            return tile_size
+        else:
+            echo(f'The given tile {zxy} does not exists in the MBTiles')
+            return
+
+    def get_zoom_size(self, z):
+        """
+
+        :param z:
+        :return:
+        """
+        query = f'SELECT length(tile_data) as size FROM tiles WHERE zoom_level={z}'
+
+        # Sum the response and get the size in KB
+        zoom_size = sum(self._query(query)) * 1024
+
+        if zoom_size:
+            return zoom_size
+        else:
+            echo(f'The given zoom {z} does not exists in the MBTiles')
+            return
+
+    def get_tiles(self):
+        """
+        Query and return the features of all the tiles in the MBTiles
 
         Estructure of the tiles
         for tile in tiles:
@@ -41,28 +93,39 @@ class MVTReader:
             tile[2] = y column
             tile[3] = encoded data
 
-        :param: size_limit: indicates if the there is a size constraint
-        in the query
         :return: tiles: tuple containing data in the MBTiles
         """
+        query = 'SELECT zoom_level, tile_column, tile_row, tile_data FROM tiles'
 
-        if size_limit:
-            query = f'SELECT zoom_level, tile_column, tile_row, tile_data, length(tile_data) as size FROM tiles WHERE length(tile_data) > {TILE_SIZE_LIMIT * 1024} ORDER BY zoom_level, tile_column, tile_row ASC'
-        else:
-            query = 'SELECT zoom_level, tile_column, tile_row, tile_data FROM tiles'
-
-        try:
-            self.cur.execute(query)
-            tiles = self.cur.fetchall()
-            self.conn.close()
-        except Exception as e:
-            print(e)
-            return
+        tiles = self._query(query)
 
         if tiles:
             return tiles
         else:
-            print('There is no data or at least not too big tiles')
+            echo('There is no data in the MBTiles')
+            return
+
+    def get_big_tiles(self):
+        """
+        Query and return the features of the big tiles in the MBTiles
+
+        Estructure of the tiles
+        for tile in tiles:
+            tile[0] = zoom
+            tile[1] = x column
+            tile[2] = y column
+            tile[3] = encoded data
+
+        :return: tiles: tuple containing data in the MBTiles
+        """
+        query = f'SELECT zoom_level, tile_column, tile_row, tile_data, length(tile_data) as size FROM tiles WHERE length(tile_data) > {TILE_SIZE_LIMIT * 1024} ORDER BY zoom_level, tile_column, tile_row ASC'
+
+        tiles = self._query(query)
+
+        if tiles:
+            return tiles
+        else:
+            echo('There is no data or at least not too big tiles in the MBTiles')
             return
 
     def get_decoded_tiles(self, size_limit=False) -> list:
@@ -84,16 +147,18 @@ class MVTReader:
         :return: tiles: tuple containing decoded data in the MBTiles
         """
         decoded_tiles = []
-        tiles = self.get_tiles(size_limit)
+        tiles = self.get_tiles() if size_limit else self.get_big_tiles()
 
         if tiles:
             for tile in tiles:
-                encoded_tile_data = self._get_tile_data(tile)
-                decoded_tile_data = self._decode_tile_data(encoded_tile_data)
+                decoded_tile_data = self._decode_tile_data(tile)
                 decoded_tile = [tile[0], tile[1], tile[2], decoded_tile_data]
                 decoded_tiles.append(decoded_tile)
+        else:
+            echo('There is no data or at least not too big tiles in the MBTiles')
+            return
 
-            return decoded_tiles
+        return decoded_tiles
 
     @staticmethod
     def _create_connection(db_file: str):
@@ -107,7 +172,7 @@ class MVTReader:
         try:
             conn = sqlite3.connect(db_file)
         except Exception as e:
-            print(e)
+            echo(e)
 
         return conn
 
@@ -123,7 +188,7 @@ class MVTReader:
         return zxy
 
     @staticmethod
-    def _get_tile_zxy_string(tile: tuple) -> tuple:
+    def _get_tile_zxy_string(tile: tuple) -> str:
         """
         Get the zoom level, tile column and tile row
         in string format
@@ -131,8 +196,19 @@ class MVTReader:
         :return: String with the zoom level, tile column
         and tile row
         """
-        zxy = (f'{tile[0]}/{tile[1]}/{tile[2]}')
+        zxy = f'{tile[0]}/{tile[1]}/{tile[2]}'
         return zxy
+
+    @staticmethod
+    def _decode_zxy_string(tile: str) -> tuple:
+        """
+
+        :param tile:
+        :return:
+        """
+        zxy = tile.split('/')
+        z, x, y = zxy[0], zxy[1], zxy[2]
+        return z, x, y
 
     @staticmethod
     def _get_tile_data(tile: tuple) -> str:
@@ -143,14 +219,14 @@ class MVTReader:
         """
         return gzip.decompress(tile[3])
 
-    @staticmethod
-    def _decode_tile_data(tile_data: str) -> dict:
+    def _decode_tile_data(self, tile: tuple) -> dict:
         """
         Get the decoded tile data
         :param: tile_data: Data in the vector tile
         :return: Decoded tile data
         """
+        encoded_tile_data = self._get_tile_data(tile)
         try:
-            return mapbox_vector_tile.decode(tile_data)
+            return mapbox_vector_tile.decode(encoded_tile_data)
         except Exception as e:
-            print(e)
+            echo(e)

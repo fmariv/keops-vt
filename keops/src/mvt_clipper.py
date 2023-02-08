@@ -72,15 +72,27 @@ class MVTClipper:
             tile_intersects_mask = False
             layer_data = tile[3]
             for layer, data in layer_data.items():
-                feature = data['features'][0]
-                geometry = feature['geometry']
-                # Get the geometry type and coordinates to
-                # create a shapely object
-                geometry_type, coordinates = geometry['type'], geometry['coordinates']
-                # Get shapely geometry type with the GEOMETRY_DICT
-                # and create a shapely object
-                feature_shape = GEOMETRY_DICT[geometry_type](coordinates)
-                if feature_shape.intersects(self.geojson_mask_shape):
-                    tile_intersects_mask = True if not tile_intersects_mask else True
+                features = data['features']
+                for feature in features:
+                    geometry = feature['geometry']
+                    # Get the geometry type and coordinates to
+                    # create a shapely object
+                    geometry_type = geometry['type']
+                    # TODO unificar el formato de salida de las MBTiles a un formato que se pueda leer siempre
+                    if geometry_type == 'Polygon':
+                        coordinates = geometry['coordinates'][0]
+                    elif geometry_type == 'MultiPolygon':
+                        continue
+                    else:
+                        coordinates = geometry['coordinates']
+                    # Get shapely geometry type with the GEOMETRY_DICT
+                    # and create a shapely object
+                    feature_shape = GEOMETRY_DICT[geometry_type](coordinates)
+                    if feature_shape.intersects(self.geojson_mask_shape):
+                        # TODO no funciona, no intersecta ninguna???
+                        print('siu')
+                        print('')
+                        print('')
+                        tile_intersects_mask = True if not tile_intersects_mask else True
 
         return None

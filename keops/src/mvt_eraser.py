@@ -46,7 +46,7 @@ class MVTEraser(MVTReader):
 
         try:
             self.cur.execute(query)
-            print(f'Tile in {z}/{x}/{y} dropped successfully!')
+            print(f'Tile in {z}/{x}/{y} erased successfully!')
             self.conn.close()
         except Exception as e:
             print(e)
