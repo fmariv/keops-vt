@@ -1,5 +1,6 @@
 # Keops
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+![CI](https://github.com/fmariv/keops-tiles/actions/workflows/tile_lint.yaml/badge.svg)
 
 <p align="center">
     <img src="favicon.png" alt="Keops logo">
