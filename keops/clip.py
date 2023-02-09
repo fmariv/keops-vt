@@ -4,7 +4,7 @@ import click
 
 from .src.mvt_reader import MVTReader
 from .src.mvt_clipper import MVTClipper
-from .src.utils import check_geojson_is_valid
+from .src.utils import GeoJsonChecker
 
 
 @click.command(short_help='Clip vector tiles to given geoJSON')
@@ -16,7 +16,8 @@ def clip(mbtiles, geojson):
     $ keops clip input.mbtiles bounds.geojson
 
     """
-    geojson_is_valid = check_geojson_is_valid(geojson)
+    gj_checker = GeoJsonChecker(geojson)
+    geojson_is_valid = gj_checker.check_geojson_is_valid()
     if not geojson_is_valid:
         return
 

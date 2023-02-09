@@ -17,12 +17,11 @@ GEOMETRY_DICT = {
 }
 
 
-gj_checker = GeoJsonChecker()
-
 class MVTClipper:
     
     def __init__(self, geojson_mask: str):
         self.geojson_mask_shape = self._set_geojson_mask(geojson_mask)
+        self.gj_checker = GeoJsonChecker(geojson_mask)
 
     def _set_geojson_mask(self, geojson_mask):
         """
@@ -35,7 +34,7 @@ class MVTClipper:
         # Check if the GeoJSON CRS is in Google Mercator
         # If not, translate
         if not geojson_mask_gdf.crs == 'epsg:3857':
-            geojson_mask_gdf = gj_checker.translate_geojson_crs(geojson_mask_gdf)
+            geojson_mask_gdf = self.gj_checker.translate_geojson_crs(geojson_mask_gdf)
 
         geojson_mask_shape = self._geodataframe_to_shapely(geojson_mask_gdf)
 
