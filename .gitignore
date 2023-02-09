@@ -3,7 +3,7 @@ dist/
 env/
 build/
 keops_tiles.egg-info/
-/__pycache__/
+*/__pycache__/
 keops/__pycache__/
 keops/src/__pycache__/
 files/
