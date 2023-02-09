@@ -6,7 +6,7 @@ import json
 
 from shapely.geometry import Polygon, LineString, Point, MultiPolygon, MultiLineString, shape
 
-from .utils import translate_geojson_crs
+from .utils import GeoJsonChecker
 
 GEOMETRY_DICT = {
     'Polygon': Polygon,
@@ -16,6 +16,8 @@ GEOMETRY_DICT = {
     'MultiLineString': MultiLineString
 }
 
+
+gj_checker = GeoJsonChecker()
 
 class MVTClipper:
     
@@ -33,7 +35,7 @@ class MVTClipper:
         # Check if the GeoJSON CRS is in Google Mercator
         # If not, translate
         if not geojson_mask_gdf.crs == 'epsg:3857':
-            geojson_mask_gdf = translate_geojson_crs(geojson_mask_gdf)
+            geojson_mask_gdf = gj_checker.translate_geojson_crs(geojson_mask_gdf)
 
         geojson_mask_shape = self._geodataframe_to_shapely(geojson_mask_gdf)
 

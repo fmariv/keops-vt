@@ -10,12 +10,11 @@ from .src.mvt_eraser import MVTEraser
 @click.argument('z', type=int, required=True)
 @click.argument('x', type=int, required=True)
 @click.argument('y', type=int, required=True)
-def erase(mbtiles, z, x, y):
-    # TODO test, poner tile todo junto como z/x/y? En size se ha hecho así, habria que hacerlo uniforme
+def erase(mbtiles, zxy):
     """Erase a tile in a MBTiles file.
 
-    $ keops erase input.mbtiles 10 56 65
+    $ keops erase input.mbtiles 10/56/65
 
     """
-    mvt_dropper = MVTEraser(mbtiles)
-    mvt_dropper.erase_tile(z, x, y)
+    mvt_eraser = MVTEraser(mbtiles)
+    mvt_eraser.erase_tile(zxy)

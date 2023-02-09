@@ -1,5 +1,7 @@
 from .mvt_reader import MVTReader
 
+from .utils import decode_zxy_string
+
 
 class MVTEraser(MVTReader):
     """Erase a tile in a MBTiles file"""
@@ -10,9 +12,7 @@ class MVTEraser(MVTReader):
     def _check_tile_exists(self, z, x, y):
         """
 
-        :param z:
-        :param x:
-        :param y:
+        :param zxy:
         :return:
         """
         query = f'SELECT * from tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y}'
@@ -28,7 +28,7 @@ class MVTEraser(MVTReader):
             print(e)
             return False
 
-    def erase_tile(self, z, x, y):
+    def erase_tile(self, zxy):
         """
 
         :param z:
@@ -36,18 +36,21 @@ class MVTEraser(MVTReader):
         :param y:
         :return:
         """
+        # TODO check if tiles is a view, remove map 
+        # TODO Rebuild indexes?
+        z, x, y = decode_zxy_string(zxy)
         tile_exists = self._check_tile_exists(z, x, y)
         if not tile_exists:
             self.conn.close()
-            print(f'Error: The given tile at {z}/{x}/{y} does not exists in the MBTiles file')
-            return
+            print(f'Error: The given tile at {zxy} does not exists in the MBTiles file')
+            return False
 
         query = f'DELETE FROM tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y}'
 
         try:
             self.cur.execute(query)
-            print(f'Tile in {z}/{x}/{y} erased successfully!')
+            print(f'Tile in {zxy} erased successfully!')
             self.conn.close()
         except Exception as e:
             print(e)
-            return
+            return False

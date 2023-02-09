@@ -3,6 +3,7 @@ import gzip
 import mapbox_vector_tile
 
 from click import echo
+from .utils import decode_zxy_string
 
 
 TILE_SIZE_LIMIT = 500
@@ -53,7 +54,7 @@ class MVTReader:
         :param zxy:
         :return:
         """
-        z, x, y = self._decode_zxy_string(zxy)
+        z, x, y = decode_zxy_string(zxy)
         query = f'SELECT length(tile_data) as size FROM tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y}'
 
         # Get the size in KB
@@ -198,17 +199,6 @@ class MVTReader:
         """
         zxy = f'{tile[0]}/{tile[1]}/{tile[2]}'
         return zxy
-
-    @staticmethod
-    def _decode_zxy_string(tile: str) -> tuple:
-        """
-
-        :param tile:
-        :return:
-        """
-        zxy = tile.split('/')
-        z, x, y = zxy[0], zxy[1], zxy[2]
-        return z, x, y
 
     @staticmethod
     def _get_tile_data(tile: tuple) -> str:
