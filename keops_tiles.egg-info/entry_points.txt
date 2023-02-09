@@ -1,2 +1,0 @@
-[console_scripts]
-keops = keops.main:main_group
