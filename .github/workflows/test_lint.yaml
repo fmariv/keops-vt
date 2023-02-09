@@ -1,4 +1,4 @@
-name: Test and Lint Keops package
+name: CI
 
 on: [push]
 
