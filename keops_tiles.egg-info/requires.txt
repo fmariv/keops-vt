@@ -1,0 +1,3 @@
+Click
+mapbox-vector-tile==1.2.1
+protobuf==3.19.4

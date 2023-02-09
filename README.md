@@ -1,9 +1,25 @@
 # Keops
+[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 
 <p align="center">
     <img src="favicon.png" alt="Keops logo">
 </p>
 
-Keops allows custom edition and management of Mapbox Vector Tiles, such as vector tiles clipping by a GeoJSON mask, size optimization by removing unnecessary feautures in a given GL style and much more.
+Keops is a CLI tool that allows you to apply some logic to vector tiles in an MBTiles, such as clipping by a GeoJSON mask, size optimization by removing unnecessary feautures in a given GL style, and much more.
 
+_Still in development!_
 
+## Usage
+
+The usage is pretty simple and straigthforward. For instance, if you want to drop a given tile in a MBTiles:
+
+```bash
+keops erase input.mbtiles 6/10/23
+```
+
+## Author
+
+Fran Martín
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
