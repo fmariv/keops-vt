@@ -10,25 +10,6 @@ class MVTEraser(MVTReader):
         super().__init__(mbtiles)
         self.tile_table = self._get_tiles_table()
 
-    def _check_tile_exists(self, z, x, y):
-        """
-
-        :param zxy:
-        :return:
-        """
-        query = f'SELECT * from tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y};'
-
-        try:
-            self.cur.execute(query)
-            result = self.cur.fetchone()
-            if result:
-                return True
-            else:
-                return False
-        except Exception as e:
-            print(e)
-            return False
-
     def _get_tiles_table(self):
         """
 

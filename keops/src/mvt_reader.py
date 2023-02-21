@@ -39,8 +39,10 @@ class MVTReader:
         :return:
         """
         try:
+            self.cur.row_factory = lambda cursor, row: row[0]
             self.cur.execute(sql_query)
             response = self.cur.fetchall()
+            self.cur.row_factory = None
             self.conn.close()
         except Exception as e:
             echo(e)
@@ -55,16 +57,18 @@ class MVTReader:
         :return:
         """
         z, x, y = decode_zxy_string(zxy)
-        query = f'SELECT length(tile_data) as size FROM tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y}'
+        tile_exists = self._check_tile_exists(z, x, y)
+
+        if not tile_exists:
+            self.conn.close()
+            print(f'Error: The given tile at {zxy} does not exists in the MBTiles file')
+            return
 
         # Get the size in KB
-        tile_size = self._query(query) * 1024
+        query = f'SELECT length(tile_data) as size FROM tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y}'
+        tile_size = self._query(query)[0] * 0.001
 
-        if tile_size:
-            return tile_size
-        else:
-            echo(f'The given tile {zxy} does not exists in the MBTiles')
-            return
+        return tile_size
 
     def get_zoom_size(self, z):
         """
@@ -72,16 +76,18 @@ class MVTReader:
         :param z:
         :return:
         """
-        query = f'SELECT length(tile_data) as size FROM tiles WHERE zoom_level={z}'
+        zoom_exists = self._check_zoom_exists(z)
+
+        if not zoom_exists:
+            self.conn.close()
+            print(f'Error: The given zoom {z} does not exists in the MBTiles file')
+            return
 
         # Sum the response and get the size in KB
-        zoom_size = sum(self._query(query)) * 1024
+        query = f'SELECT length(tile_data) as size FROM tiles WHERE zoom_level={z}'
+        result = sum(self._query(query)) * 0.001
 
-        if zoom_size:
-            return zoom_size
-        else:
-            echo(f'The given zoom {z} does not exists in the MBTiles')
-            return
+        return result
 
     def get_tiles(self):
         """
@@ -220,3 +226,41 @@ class MVTReader:
             return mapbox_vector_tile.decode(encoded_tile_data)
         except Exception as e:
             echo(e)
+
+    def _check_tile_exists(self, z, x, y):
+        """
+
+        :param zxy:
+        :return:
+        """
+        query = f'SELECT * from tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y};'
+
+        try:
+            self.cur.execute(query)
+            result = self.cur.fetchone()
+            if result:
+                return True
+            else:
+                return False
+        except Exception as e:
+            print(e)
+            return False
+
+    def _check_zoom_exists(self, zoom_level):
+        """
+
+        :param zoom_level:
+        :return:
+        """
+        query = f'SELECT * from tiles WHERE zoom_level={zoom_level} LIMIT 1'
+
+        try:
+            self.cur.execute(query)
+            result = self.cur.fetchone()
+            if result:
+                return True
+            else:
+                return False
+        except Exception as e:
+            print(e)
+            return False
