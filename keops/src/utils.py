@@ -10,7 +10,6 @@ class GeoJsonChecker:
         """
         self._geojson_mask = geojson_mask
 
-
     def check_geojson_is_valid(self):
         """
 
@@ -55,18 +54,17 @@ class GeoJsonChecker:
     def translate_geojson_crs(self):
         """
 
-        :param geojson_mask: Geopandas GeoDataFrame of the geoJSON mask file
         :return:
         """
         return self._geojson_mask.to_crs(GOOGLE_MERCATOR)
 
 
 def decode_zxy_string(tile: str) -> tuple:
-        """
+    """
 
-        :param tile:
-        :return:
-        """
-        zxy = tile.split('/')
-        z, x, y = zxy[0], zxy[1], zxy[2]
-        return z, x, y
+    :param tile:
+    :return:
+    """
+    zxy = tile.split('/')
+    z, x, y = int(zxy[0]), int(zxy[1]), int(zxy[2])
+    return z, x, y

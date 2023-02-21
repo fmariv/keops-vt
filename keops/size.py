@@ -13,6 +13,7 @@ def size(mbtiles, zoom=None, tile=None):
     """Get the size in KB of a given tile or given zoom level.
 
     $ keops size input.mbtiles --zoom 10
+
     $ keops size input.mbtiles --tile 10/56/65
 
     """
@@ -26,7 +27,11 @@ def size(mbtiles, zoom=None, tile=None):
     mvt_reader = MVTReader(mbtiles)
     if tile is not None and zoom is None:
         tile_size = mvt_reader.get_tile_size(tile)
-        click.echo(f'[>] The size of the tile {tile} is {tile_size} KB')
+        if tile_size:
+            click.echo(f'[>] The size of the tile {tile} is {tile_size} KB')
+            if tile_size > 500:
+                click.echo(f'Remember that the maximum recommended size of a tile is 500 KB!')
     elif tile is None and zoom is not None:
         zoom_size = mvt_reader.get_zoom_size(zoom)
-        click.echo(f'[>] The size of the zoom {zoom} is {zoom_size} KB')
+        if zoom_size:
+            click.echo(f'[>] The size of the zoom {zoom} is {zoom_size} KB')

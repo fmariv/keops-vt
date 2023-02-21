@@ -50,7 +50,7 @@ class MVTReader:
 
         return response
 
-    def get_tile_size(self, zxy):
+    def get_tile_size(self, zxy: str) -> float:
         """
 
         :param zxy:
@@ -62,15 +62,16 @@ class MVTReader:
         if not tile_exists:
             self.conn.close()
             print(f'Error: The given tile at {zxy} does not exists in the MBTiles file')
-            return
+            return 0
 
         # Get the size in KB
         query = f'SELECT length(tile_data) as size FROM tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y}'
         tile_size = self._query(query)[0] * 0.001
+        tile_size = round(tile_size, 3)
 
         return tile_size
 
-    def get_zoom_size(self, z):
+    def get_zoom_size(self, z: int) -> float:
         """
 
         :param z:
@@ -81,13 +82,14 @@ class MVTReader:
         if not zoom_exists:
             self.conn.close()
             print(f'Error: The given zoom {z} does not exists in the MBTiles file')
-            return
+            return 0
 
         # Sum the response and get the size in KB
         query = f'SELECT length(tile_data) as size FROM tiles WHERE zoom_level={z}'
-        result = sum(self._query(query)) * 0.001
+        zoom_size = sum(self._query(query)) * 0.001
+        zoom_size = round(zoom_size, 3)
 
-        return result
+        return zoom_size
 
     def get_tiles(self):
         """
@@ -227,7 +229,7 @@ class MVTReader:
         except Exception as e:
             echo(e)
 
-    def _check_tile_exists(self, z, x, y):
+    def _check_tile_exists(self, z: int, x: int, y: int) -> bool:
         """
 
         :param zxy:
@@ -246,7 +248,7 @@ class MVTReader:
             print(e)
             return False
 
-    def _check_zoom_exists(self, zoom_level):
+    def _check_zoom_exists(self, zoom_level: int) -> bool:
         """
 
         :param zoom_level:
