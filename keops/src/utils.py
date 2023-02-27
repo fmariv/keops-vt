@@ -1,4 +1,5 @@
-import geopandas as gpd
+import click
+import re
 
 GOOGLE_MERCATOR = 'EPSG:3857'
 
@@ -68,3 +69,35 @@ def decode_zxy_string(tile: str) -> tuple:
     zxy = tile.split('/')
     z, x, y = int(zxy[0]), int(zxy[1]), int(zxy[2])
     return z, x, y
+
+
+def zxy_string_is_valid(tile: str) -> bool:
+    """
+
+    :param tile:
+    :return:
+    """
+    zxy = tile.split('/')
+    if len(zxy) != 3:
+        click.echo(f'Tile format {tile} is not valid. It must follows the format z/x/y')
+        return False
+    for i in zxy:
+        if re.search('[a-zA-Z]', i) is not None:
+            click.echo('The given tile contains letters. It must follows the format z/x/y ONLY with integers')
+            return False
+    return True
+
+
+def zoom_is_valid(zoom: any) -> bool:
+    """
+
+    :param zoom:
+    :return:
+    """
+    try:
+        int(zoom)
+    except ValueError:
+        click.echo('The given zoom level is not valid. It must be an integer')
+        return False
+
+    return True

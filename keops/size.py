@@ -3,18 +3,19 @@
 import click
 
 from .src.mvt_reader import MVTReader
+from .src.utils import zxy_string_is_valid, zoom_is_valid
 
 
 @click.command(short_help='Get the size of a given tile or zoom level in a MBTiles file')
 @click.argument('mbtiles', type=click.Path(exists=True), required=True)
 @click.option('-z', '--zoom')
 @click.option('-t', '--tile')
-def size(mbtiles, zoom=None, tile=None):
+def size(mbtiles, zoom: int, tile: str):
     """Get the size in KB of a given tile or given zoom level.
 
-    $ keops size input.mbtiles --zoom 10
+    $ keops size --zoom 10 input.mbtiles
 
-    $ keops size input.mbtiles --tile 10/56/65
+    $ keops size --tile 10/56/65 input.mbtiles
 
     """
     if zoom is None and tile is None:
@@ -25,13 +26,13 @@ def size(mbtiles, zoom=None, tile=None):
         return
 
     mvt_reader = MVTReader(mbtiles)
-    if tile is not None and zoom is None:
+    if tile is not None and zoom is None and zxy_string_is_valid(tile):
         tile_size = mvt_reader.get_tile_size(tile)
         if tile_size:
             click.echo(f'[>] The size of the tile {tile} is {tile_size} KB')
             if tile_size > 500:
                 click.echo(f'Remember that the maximum recommended size of a tile is 500 KB!')
-    elif tile is None and zoom is not None:
+    elif tile is None and zoom is not None and zoom_is_valid(zoom):
         zoom_size = mvt_reader.get_zoom_size(zoom)
         if zoom_size:
             click.echo(f'[>] The size of the zoom {zoom} is {zoom_size} KB')

@@ -1,7 +1,7 @@
 # Based on https://github.com/ibesora/vt-optimizer/blob/c1d480283bf5f9a132d9aed0ea705ebdaf76d161/src/core/Log.js
 # TODO utilizar alguna libreria que haga tablas bonitas
 
-class MetricsLogger:
+class MVTInfoGetter:
     """ Class that logs the metrics of a MBTiles file"""
 
     def __init__(self):
@@ -136,7 +136,6 @@ class MVTMetricsReader:
         digested_tile_data[zxy] = layer_list
 
         return digested_tile_data
-
 
     def append_tile_data(tile):
         """
