@@ -101,3 +101,32 @@ def zoom_is_valid(zoom: any) -> bool:
         return False
 
     return True
+
+
+def tile_zoom_are_valid(zoom: int, tile: str) -> bool:
+    """
+
+    :param tile:
+    :param zoom:
+    :return:
+    """
+    if zoom is None and tile is None:
+        click.echo('You have to give at least a tile or a zoom level')
+        return False
+    if zoom is not None and tile is not None:
+        click.echo('You only have to give a tile or a zoom level, not both of them')
+        return False
+
+    if zxy_string_is_valid(tile) and zoom_is_valid(zoom):
+        return True
+    else:
+        return False
+
+
+def mbtiles_is_valid(mbtiles):
+    """
+
+    :param mbtiles:
+    :return:
+    """
+    return True

@@ -24,3 +24,8 @@ def test_zxy_string_is_valid():
 def test_zoom_is_valid():
     is_valid = zoom_is_valid('a')
     assert is_valid is False
+
+
+def test_tile_zoom_are_valid():
+    is_valid = tile_zoom_are_valid('a', 'a/2/12')
+    assert is_valid is False

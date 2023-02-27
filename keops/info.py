@@ -3,6 +3,7 @@
 import click
 
 from .src.mvt_info_getter import MVTInfoGetter
+from .src.utils import tile_zoom_are_valid, mbtiles_is_valid
 
 
 @click.command(short_help='Get info related with layers and their features of a given tile or zoom level in a MBTiles file')
@@ -17,4 +18,11 @@ def info(mbtiles, zoom: int, tile: str):
     $ keops info --tile 10/56/65 input.mbtiles
 
     """
-    pass
+    if not tile_zoom_are_valid(zoom, tile) and not mbtiles_is_valid(mbtiles):
+        return
+
+    mvt_info_getter = MVTInfoGetter()
+    if tile is not None and zoom is None:
+        pass
+    elif tile is None and zoom is not None:
+        pass
