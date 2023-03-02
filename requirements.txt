@@ -4,3 +4,4 @@ geopandas
 click
 geojson
 setuptools
+docker

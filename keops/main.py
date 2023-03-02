@@ -12,6 +12,7 @@ from .clip import clip
 from .erase import erase
 from .size import size
 from .info import info
+from .shrink import shrink
 
 
 @click.group()
@@ -22,7 +23,7 @@ def main_group():
 
 # In order to add commands to the group, just import
 # and add them to the commands list
-commands = [clip, erase, size, info]
+commands = [clip, erase, size, info, shrink]
 
 for command in commands:
     main_group.add_command(command)
