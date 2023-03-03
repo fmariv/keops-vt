@@ -130,3 +130,23 @@ def mbtiles_is_valid(mbtiles):
     :return:
     """
     return True
+
+
+def get_shrink_command_options(options: tuple) -> str:
+    """
+
+    :return:
+    """
+    command_options = ''
+    options_flags = {0: '--extent', 1: '--precision', 2: '--shrink', 3: '--include'}
+    for option in options:
+        if option is not None:
+            i = options.index(option)
+            flag = options_flags[i]
+            option_command = f'{flag} {option}'
+            if not command_options:
+                command_options = option_command
+            else:
+                command_options = f'{command_options} {option_command}'
+
+    return command_options

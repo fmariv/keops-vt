@@ -15,16 +15,21 @@ Check them GitHubs here and give kudos to them!
 
 Important
 
-As this function uses a Docker image, you must have a running Docker version if you to use it
+As this function uses a Docker image, you must have a running Docker version if you to use it. Also,
+both the input and output MBTiles must be in the same directory, as it has to be mounted to use
+run the Docker image
 
 """
 
 
+import os
 import click
 import docker
 
+from .src.utils import get_shrink_command_options
 
-@click.command(short_help='Reduce and simplify all features of all or any vector tiles in an MBTiles container')
+
+@click.command(short_help='Reduce and simplify all features of all or any vector tiles in an MBTiles container. Docker required.')
 @click.argument('input', type=click.Path(exists=True), required=True)
 @click.argument('output', type=click.Path(), required=True)
 @click.option('--extent', type=int, help='desired extent of the new layers [deault: 1024]')
@@ -34,18 +39,44 @@ import docker
 def shrink(input, output, extent, precision, shrink, include):
     """Reduce and simplify all features of all or any vector tiles in an MBTiles container.
 
-    Important: you do need a running Docker version if you want to use this function
+    Important:
+        1. Docker required.
+        2. Both input and output files must be in the same directory, as it has to be mounted
+           to run Docker.
 
     $ keops shrink input.mbtiles output.mbtiles
 
-    """
-    client = docker.from_env()
-    client.containers.run("oozberg/tileshrink", name='keops-tileshrink', command="echo hello world")
-    container = client.containers.get('keops-tileshrink')
-    try:
-        for line in container.logs(stream=True):
-            print(line.strip())
-    except:
-        container.stop()
+    $ keops shrink --shrink 4 input.mbtiles output.mbtiles
 
-    container.stop()
+    """
+    if input == output:
+        click.echo('You must declare different input and output files')
+        return
+
+    # Get command options as string
+    options = (extent, precision, shrink, include)
+    command_options = get_shrink_command_options(options)
+
+    # Get the input and output abspath
+    input_dir, output_dir = os.path.abspath(os.path.dirname(input)), os.path.abspath(os.path.dirname(output))
+    if input_dir != output_dir:
+        click.echo('Both input and output MBTiles must be in the same directory')
+        return
+
+    input_file, output_file = os.path.basename(input), os.path.basename(output)
+    # By default, the bind is /opt/data
+    shrink_command = f'tileshrink {command_options} /opt/data/{input_file} /opt/data/{output_file}'
+    shrink_mount = {input_dir: {'bind': '/opt/data', 'mode': 'rw'}}
+
+    client = docker.from_env()
+    container_name = 'keops-tileshrink'
+    container = client.containers.run("oozberg/tileshrink",
+                                      name=container_name,
+                                      volumes=shrink_mount,
+                                      command=shrink_command,
+                                      detach=True,
+                                      remove=True)
+
+    logs = container.logs(stream=True)
+    for line in logs:
+        click.echo(line.strip())
