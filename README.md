@@ -8,7 +8,17 @@
 
 Keops is a CLI tool that allows you to apply some logic to vector tiles in an MBTiles, such as clipping by a GeoJSON mask, size optimization by removing unnecessary feautures in a given GL style, and much more.
 
-_Still in development!_
+_Still in development! The package is not stable yet_
+
+## Installation
+
+Keops needs Python 3.7 or higher. The recommended way to install it is via [pip](https://pypi.org/project/keops-tiles/).
+
+``` 
+pip install keops-tiles
+```
+
+If you want to run the ```shrink``` command you also need [Docker](https://www.docker.com/).
 
 ## CLI Usage
 
@@ -27,11 +37,16 @@ Usage: keops [OPTIONS] COMMAND [ARGS]...
 
 Options:
   --help  Show this message and exit.
-
+ 
 Commands:
-  clip   Clip vector tiles to given geoJSON
-  erase  Erase a tile in a MBTiles file
-  size   Get the size of a given tile or zoom level in a MBTiles file
+  clip    Clip vector tiles to given geoJSON
+  erase   Erase a tile in a MBTiles file
+  info    Get info related with layers and their features of a given tile or
+          zoom level in a MBTiles file
+  shrink  Reduce and simplify all features of all or any vector tiles in a
+          MBTiles container. Docker required.
+  size    Get the size of a given tile or zoom level in a MBTiles file
+
 ```
 
 ## Author

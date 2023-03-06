@@ -2,9 +2,11 @@
 
 Keops is a CLI tool that allows you to apply some logic to vector tiles in an MBTiles, such as clipping by a GeoJSON mask, size optimization by removing unnecessary feautures in a given GL style, and much more.
 
+Read the documentation for more details: http://keops.franmartin.es/.
+
 ## Installation
 
-Keops needs Python 3.7 or higher. The recommended way to install it is via [pip](https://pypi.org/project/pip/).
+Keops needs Python 3.7 or higher. The recommended way to install it is via [pip](https://pypi.org/project/keops-tiles/).
 
 ``` 
 pip install keops-tiles
