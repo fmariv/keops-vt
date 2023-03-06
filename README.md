@@ -8,6 +8,9 @@
 
 Keops is a CLI tool that allows you to apply some logic to vector tiles in an MBTiles, such as clipping by a GeoJSON mask, size optimization by removing unnecessary feautures in a given GL style, and much more.
 
+Read the documentation for more details: [keops.franmartin.es](https://keops.franmartin.es/).
+
+
 _Still in development! The package is not stable yet_
 
 ## Installation
