@@ -5,3 +5,5 @@ click
 geojson
 setuptools
 docker
+mkdocs
+mkdocs-material

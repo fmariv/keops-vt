@@ -8,8 +8,8 @@ from .src.utils import tile_zoom_are_valid, mbtiles_is_valid
 
 @click.command(short_help='Get info related with layers and their features of a given tile or zoom level in a MBTiles file')
 @click.argument('mbtiles', type=click.Path(exists=True), required=True)
-@click.option('-z', '--zoom')
-@click.option('-t', '--tile')
+@click.option('-z', '--zoom', type=int)
+@click.option('-t', '--tile', type=str)
 def info(mbtiles, zoom: int, tile: str):
     """Get info related with layers and their features of a given tile or zoom level in a MBTiles file.
 

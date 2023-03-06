@@ -9,3 +9,4 @@ keops/__pycache__/
 keops/src/__pycache__/
 files/
 *cache/
+site/

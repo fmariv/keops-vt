@@ -88,21 +88,6 @@ def zxy_string_is_valid(tile: str) -> bool:
     return True
 
 
-def zoom_is_valid(zoom: any) -> bool:
-    """
-
-    :param zoom:
-    :return:
-    """
-    try:
-        int(zoom)
-    except ValueError:
-        click.echo('The given zoom level is not valid. It must be an integer')
-        return False
-
-    return True
-
-
 def tile_zoom_are_valid(zoom: int, tile: str) -> bool:
     """
 
@@ -117,7 +102,7 @@ def tile_zoom_are_valid(zoom: int, tile: str) -> bool:
         click.echo('You only have to give a tile or a zoom level, not both of them')
         return False
 
-    if zxy_string_is_valid(tile) and zoom_is_valid(zoom):
+    if zxy_string_is_valid(tile) and type(zoom) == int:
         return True
     else:
         return False

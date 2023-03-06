@@ -21,11 +21,13 @@ def test_zxy_string_is_valid():
     assert is_valid is False
 
 
-def test_zoom_is_valid():
-    is_valid = zoom_is_valid('a')
-    assert is_valid is False
-
-
 def test_tile_zoom_are_valid():
     is_valid = tile_zoom_are_valid('a', 'a/2/12')
     assert is_valid is False
+
+
+def test_get_shrink_command_options():
+    expected = '--precision 2 --include 10'
+    options = (None, 2, None, 10)
+    result = get_shrink_command_options(options)
+    assert expected == result

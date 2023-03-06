@@ -1,0 +1,7 @@
+site_name: "Keops"
+site_author: Fran Martín
+copyright: 2023 Fran Martín
+repo_url: https://github.com/fmariv/keops-tiles
+repo_name: fmariv/keops-tiles
+site_url: http://keops.franmartin.es
+theme: material
