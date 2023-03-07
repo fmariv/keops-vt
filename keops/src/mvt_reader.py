@@ -1,8 +1,8 @@
 import sqlite3
 import gzip
 import mapbox_vector_tile
+import click
 
-from click import echo
 from .utils import decode_zxy_string
 
 
@@ -32,20 +32,21 @@ class MVTReader:
         """
         return self.conn.cursor()
 
-    def _query(self, sql_query):
+    def _query(self, sql_query, rows=False):
         """
 
         :param sql_query:
         :return:
         """
         try:
-            self.cur.row_factory = lambda cursor, row: row[0]
+            if rows:
+                self.cur.row_factory = lambda cursor, row: row[0]
             self.cur.execute(sql_query)
             response = self.cur.fetchall()
             self.cur.row_factory = None
             self.conn.close()
         except Exception as e:
-            echo(e)
+            click.echo(e)
             return
 
         return response
@@ -66,7 +67,7 @@ class MVTReader:
 
         # Get the size in KB
         query = f'SELECT length(tile_data) as size FROM tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y}'
-        tile_size = self._query(query)[0] * 0.001
+        tile_size = self._query(query, True)[0] * 0.001
         tile_size = round(tile_size, 3)
 
         return tile_size
@@ -86,10 +87,50 @@ class MVTReader:
 
         # Sum the response and get the size in KB
         query = f'SELECT length(tile_data) as size FROM tiles WHERE zoom_level={z}'
-        zoom_size = sum(self._query(query)) * 0.001
+        zoom_size = sum(self._query(query, True)) * 0.001
         zoom_size = round(zoom_size, 3)
 
         return zoom_size
+
+    def get_tile(self, zxy: str) -> list or None:
+        """
+
+        :param zxy:
+        :return:
+        """
+        z, x, y = decode_zxy_string(zxy)
+        tile_exists = self._check_tile_exists(z, x, y)
+
+        if not tile_exists:
+            self.conn.close()
+            print(f'Error: The given tile at {zxy} does not exists in the MBTiles file')
+            return
+
+        query = f'SELECT zoom_level, tile_column, tile_row, tile_data FROM tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y}'
+        tile = self._query(query)[0]
+
+        return tile
+
+    def get_decoded_tile(self, zxy: str) -> list or None:
+        """
+
+                :param zxy:
+                :return:
+                """
+        z, x, y = decode_zxy_string(zxy)
+        tile_exists = self._check_tile_exists(z, x, y)
+
+        if not tile_exists:
+            self.conn.close()
+            print(f'Error: The given tile at {zxy} does not exists in the MBTiles file')
+            return
+
+        query = f'SELECT zoom_level, tile_column, tile_row, tile_data FROM tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y}'
+        tile = self._query(query)[0]
+        decoded_tile_data = self._decode_tile_data(tile)
+        decoded_tile = [tile[0], tile[1], tile[2], decoded_tile_data]
+
+        return decoded_tile
 
     def get_tiles(self):
         """
@@ -111,7 +152,7 @@ class MVTReader:
         if tiles:
             return tiles
         else:
-            echo('There is no data in the MBTiles')
+            click.echo('There is no data in the MBTiles')
             return
 
     def get_big_tiles(self):
@@ -129,15 +170,15 @@ class MVTReader:
         """
         query = f'SELECT zoom_level, tile_column, tile_row, tile_data, length(tile_data) as size FROM tiles WHERE length(tile_data) > {TILE_SIZE_LIMIT * 1024} ORDER BY zoom_level, tile_column, tile_row ASC'
 
-        tiles = self._query(query)
+        tiles = self._query(query, True)
 
         if tiles:
             return tiles
         else:
-            echo('There is no data or at least not too big tiles in the MBTiles')
+            click.echo('There is no data or at least not too big tiles in the MBTiles')
             return
 
-    def get_decoded_tiles(self, size_limit=False) -> list:
+    def get_decoded_tiles(self, size_limit=False) -> list or None:
         """
         Query, decode and return the features of the MBTiles
 
@@ -164,7 +205,7 @@ class MVTReader:
                 decoded_tile = [tile[0], tile[1], tile[2], decoded_tile_data]
                 decoded_tiles.append(decoded_tile)
         else:
-            echo('There is no data or at least not too big tiles in the MBTiles')
+            click.echo('There is no data or at least not too big tiles in the MBTiles')
             return
 
         return decoded_tiles
@@ -181,7 +222,7 @@ class MVTReader:
         try:
             conn = sqlite3.connect(db_file)
         except Exception as e:
-            echo(e)
+            click.echo(e)
 
         return conn
 
@@ -227,12 +268,12 @@ class MVTReader:
         try:
             return mapbox_vector_tile.decode(encoded_tile_data)
         except Exception as e:
-            echo(e)
+            click.echo(e)
 
     def _check_tile_exists(self, z: int, x: int, y: int) -> bool:
         """
 
-        :param zxy:
+        :param:
         :return:
         """
         query = f'SELECT * from tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y};'

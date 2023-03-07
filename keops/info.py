@@ -2,7 +2,8 @@
 
 import click
 
-from .src.mvt_info_getter import MVTInfoGetter
+from .src.mvt_printer import MVTPrinter
+from .src.mvt_reader import MVTReader
 from .src.utils import tile_zoom_are_valid, mbtiles_is_valid
 
 
@@ -21,8 +22,12 @@ def info(mbtiles, zoom: int, tile: str):
     if not tile_zoom_are_valid(zoom, tile) and not mbtiles_is_valid(mbtiles):
         return
 
-    mvt_info_getter = MVTInfoGetter()
+    mvt_printer = MVTPrinter()
+    mvt_reader = MVTReader(mbtiles)
     if tile is not None and zoom is None:
-        pass
+        # Get the decoded data of the given tile
+        decoded_tile = mvt_reader.get_decoded_tile(tile)
+        # Print a beautiful table of the data
+        mvt_printer.print_info(decoded_tile)
     elif tile is None and zoom is not None:
         pass

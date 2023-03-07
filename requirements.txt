@@ -7,3 +7,4 @@ setuptools
 docker
 mkdocs
 mkdocs-material
+prettytable
