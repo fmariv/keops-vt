@@ -2,7 +2,7 @@
 
 import click
 
-import pprint
+import json
 
 from .src.mvt_reader import MVTReader
 from .src.utils import mbtiles_is_valid
@@ -24,9 +24,9 @@ def info(mbtiles: str):
     mvt_reader = MVTReader(mbtiles)
 
     metadata = mvt_reader.get_metadata()
-    metadata_dict = {}
     for name, value in metadata:
-        metadata_dict[name] = value
-
-    # TODO better print
-    pprint.pprint(metadata_dict)
+        if name != 'json':
+            click.echo(f'{name}: {value}')
+        else:
+            value = json.loads(value)
+            click.echo(f'{name}: {json.dumps(value, sort_keys=True, indent=4, ensure_ascii=False)}')
