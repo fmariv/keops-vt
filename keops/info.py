@@ -17,3 +17,15 @@ def info(mbtiles: str):
     """
     if not mbtiles_is_valid(mbtiles):
         return
+
+    mvt_reader = MVTReader(mbtiles)
+    mvt_printer = MVTPrinter()
+
+    metadata = mvt_reader.get_metadata()
+    fields = ['name', 'value']
+    rows = []
+    for name, value in metadata:
+        row = (name, value)
+        rows.append(row)
+
+    mvt_printer.print(fields, rows)

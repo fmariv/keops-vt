@@ -210,6 +210,19 @@ class MVTReader:
 
         return decoded_tiles
 
+    def get_metadata(self):
+        """
+        """
+        query = 'SELECT name, value FROM metadata'
+
+        metadata = self._query(query, True)
+
+        if metadata:
+            return metadata
+        else:
+            click.echo('There is no metadata in the MBTiles')
+            return
+
     @staticmethod
     def _create_connection(db_file: str):
         """

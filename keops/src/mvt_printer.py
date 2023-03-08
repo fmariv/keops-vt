@@ -5,7 +5,7 @@ from prettytable import PrettyTable
 class MVTPrinter:
     """Print the given info as a beautiful table"""
 
-    def print_info(self, fields: list, rows: list):
+    def print(self, fields: list, rows: list):
         """
 
         """
