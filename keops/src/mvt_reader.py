@@ -3,6 +3,8 @@ import gzip
 import mapbox_vector_tile
 import click
 
+from typing import Union
+
 from .utils import decode_zxy_string
 
 
@@ -32,7 +34,7 @@ class MVTReader:
         """
         return self.conn.cursor()
 
-    def _query(self, sql_query, rows=False):
+    def _query(self, sql_query: str, rows: bool = False, index: Union[bool, int] = False):
         """
 
         :param sql_query:
@@ -40,7 +42,10 @@ class MVTReader:
         """
         try:
             if rows:
-                self.cur.row_factory = lambda cursor, row: row[0]
+                if isinstance(index, int):
+                    self.cur.row_factory = lambda cursor, row: row[index]
+                elif isinstance(index, bool):
+                    self.cur.row_factory = lambda cursor, row: row
             self.cur.execute(sql_query)
             response = self.cur.fetchall()
             self.cur.row_factory = None
@@ -87,7 +92,7 @@ class MVTReader:
 
         # Sum the response and get the size in KB
         query = f'SELECT length(tile_data) as size FROM tiles WHERE zoom_level={z}'
-        zoom_size = sum(self._query(query, True)) * 0.001
+        zoom_size = sum(self._query(query, True, 0)) * 0.001
         zoom_size = round(zoom_size, 3)
 
         return zoom_size
@@ -215,7 +220,7 @@ class MVTReader:
         """
         query = 'SELECT name, value FROM metadata'
 
-        metadata = self._query(query, True)
+        metadata = self._query(query)
 
         if metadata:
             return metadata
