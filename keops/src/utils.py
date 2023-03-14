@@ -108,7 +108,7 @@ def tile_zoom_are_valid(zoom: int, tile: str) -> bool:
         return False
 
 
-def mbtiles_is_valid(mbtiles):
+def mbtiles_is_valid(mbtiles: str) -> bool:
     """
 
     :param mbtiles:

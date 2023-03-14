@@ -15,8 +15,6 @@ def info(mbtiles: str):
 
     $ keops info input.mbtiles
 
-    $ keops info -j input.mbtiles
-
     """
     if not mbtiles_is_valid(mbtiles):
         return

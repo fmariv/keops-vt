@@ -36,7 +36,7 @@ from .src.utils import get_shrink_command_options
 @click.option('--precision', type=float, help='affects the level of simplification [deault: 1]')
 @click.option('--shrink', type=int, help='maximal zoomlevel to apply the shrinking')
 @click.option('--include', type=int, help='maximal zoomlevel to import untouched layers from [optional]')
-def shrink(input, output, extent, precision, shrink, include):
+def shrink(input: str, output: str, extent: int, precision: float, shrink: int, include: int):
     """Reduce and simplify all features of all or any vector tiles in a MBTiles container.
 
     Important:

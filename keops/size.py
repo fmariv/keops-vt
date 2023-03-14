@@ -10,7 +10,7 @@ from .src.utils import tile_zoom_are_valid, mbtiles_is_valid
 @click.argument('mbtiles', type=click.Path(exists=True), required=True)
 @click.option('-z', '--zoom', type=int)
 @click.option('-t', '--tile', type=str)
-def size(mbtiles, zoom: int, tile: str):
+def size(mbtiles: str, zoom: int, tile: str):
     """Get the size in KB of a given tile or given zoom level.
 
     $ keops size --zoom 10 input.mbtiles
