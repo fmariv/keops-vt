@@ -34,7 +34,7 @@ class MVTReader:
         """
         return self.conn.cursor()
 
-    def _query(self, sql_query: str, rows: bool = False, index: Union[bool, int] = False):
+    def _query(self, sql_query: str, rows: bool = False, index: int = -1):
         """
 
         :param sql_query:
@@ -42,9 +42,9 @@ class MVTReader:
         """
         try:
             if rows:
-                if isinstance(index, int):
+                if index >= 0:
                     self.cur.row_factory = lambda cursor, row: row[index]
-                elif isinstance(index, bool):
+                elif index < 0:
                     self.cur.row_factory = lambda cursor, row: row
             self.cur.execute(sql_query)
             response = self.cur.fetchall()
@@ -137,6 +137,30 @@ class MVTReader:
 
         return decoded_tile
 
+    def get_decoded_zoom(self, z):
+        """
+
+        :param zoom:
+        :return:
+        """
+        zoom_exists = self._check_zoom_exists(z)
+
+        if not zoom_exists:
+            self.conn.close()
+            print(f'Error: The given zoom {z} does not exists in the MBTiles file')
+            return 0
+
+        # Get the decoded tiles from a given zoom
+        query = f'SELECT zoom_level, tile_column, tile_row, tile_data FROM tiles WHERE zoom_level={z}'
+        zoom_tiles = self._query(query, True)
+        decoded_zoom_data = []
+        for tile in zoom_tiles:
+            decoded_tile_data = self._decode_tile_data(tile)
+            decoded_tile = [tile[0], tile[1], tile[2], decoded_tile_data]
+            decoded_zoom_data.append(decoded_tile)
+
+        return decoded_zoom_data
+
     def get_tiles(self):
         """
         Query and return the features of all the tiles in the MBTiles
@@ -202,7 +226,7 @@ class MVTReader:
         :return: tiles: tuple containing decoded data in the MBTiles
         """
         decoded_tiles = []
-        tiles = self.get_tiles() if size_limit else self.get_big_tiles()
+        tiles = self.get_tiles() if not size_limit else self.get_big_tiles()
 
         if tiles:
             for tile in tiles:

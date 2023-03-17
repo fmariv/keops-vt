@@ -3,7 +3,7 @@
 import click
 
 from .src.mvt_printer import MVTPrinter
-from .src.mvt_reader import MVTReader
+from .src.mvt_debugger import MVTDebugger
 from .src.utils import mbtiles_is_valid
 
 
@@ -23,11 +23,29 @@ def debug(mbtiles: str, zoom: int, tile: str):
         return
 
     mvt_printer = MVTPrinter()
-    mvt_reader = MVTReader(mbtiles)
-    if tile is not None and zoom is None:
-        # Get the decoded data of the given tile
-        decoded_tile = mvt_reader.get_decoded_tile(tile)
-        # Print a beautiful table of the data
-        mvt_printer.print(decoded_tile)
+    mvt_debugger = MVTDebugger(mbtiles)
+    decoded, layers_dict = None, None
+
+    if tile is None and zoom is None:
+        # Debug the entire MBTiles
+        decoded = mvt_debugger.get_decoded_tiles()
+        layers_dict = mvt_debugger.get_digested_layers_dict(decoded)
+    elif tile is not None and zoom is None:
+        # Debug a tile
+        decoded = mvt_debugger.get_decoded_tile(tile)
+        mvt_debugger.add_tile_layers_to_dict(decoded)
+        layers_dict = mvt_debugger.layers_dict
     elif tile is None and zoom is not None:
-        pass
+        # Debug a zoom
+        decoded = mvt_debugger.get_decoded_zoom(zoom)
+        layers_dict = mvt_debugger.get_digested_layers_dict(decoded)
+
+    if layers_dict:
+        rows = []
+        for layer, info in layers_dict.items():
+            f, v = info['n_features'], info['n_vertices']
+            row = (layer, f, v)
+            rows.append(row)
+
+        fields = ('layer', 'n_features', 'n_vertices')
+        mvt_printer.print(fields, rows)
