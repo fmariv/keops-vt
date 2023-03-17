@@ -1,8 +1,10 @@
+from pathlib import Path
 from pytest import approx
 
 from keops.src.mvt_reader import MVTReader
 
 MBTILES = 'tests/fixtures/sample.mbtiles'
+MBTILES_2 = 'tests/fixtures/trails.mbtiles'
 
 
 def test_check_tile_exists():
@@ -47,3 +49,16 @@ def test_get_zoom_size():
     zoom_size = reader.get_zoom_size(8)
 
     assert zoom_size == approx(696.647)
+
+
+def test_get_metadata():
+    """
+
+    :return:
+    """
+    reader = MVTReader(MBTILES_2)
+    metadata = reader.get_metadata()
+    expected = [('center', '-113.8348,48.6402,9'), ('format', 'pbf'), ('maxzoom', '14')]
+    result = [i for i in metadata[0:3]]
+
+    assert expected == result
