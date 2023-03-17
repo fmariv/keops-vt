@@ -72,7 +72,7 @@ class MVTReader:
 
         # Get the size in KB
         query = f'SELECT length(tile_data) as size FROM tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y}'
-        tile_size = self._query(query, True)[0] * 0.001
+        tile_size = self._query(query, True, 0)[0] * 0.001
         tile_size = round(tile_size, 3)
 
         return tile_size
