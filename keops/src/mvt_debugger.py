@@ -14,7 +14,7 @@ class MVTDebugger(MVTReader):
         self.layers_dict = {}
 
     @staticmethod
-    def digest_decoded_tile_data(decoded_tile_data):
+    def digest_decoded_tile_data(decoded_tile_data: dict) -> dict:
         """
         Digest the decoded tile data and return a digerible
         dictionary with it
@@ -36,7 +36,7 @@ class MVTDebugger(MVTReader):
 
         return digested_tile_data
 
-    def get_digested_layers_dict(self, decoded_tiles):
+    def get_digested_layers_dict(self, decoded_tiles: list) -> list or None:
         """
 
         :param decoded_tiles:
@@ -51,7 +51,7 @@ class MVTDebugger(MVTReader):
             click.echo('No data returned')   # TODO
             return
 
-    def add_tile_layers_to_dict(self, tile):
+    def add_tile_layers_to_dict(self, tile: list):
         """
 
         :param tile:

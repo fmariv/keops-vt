@@ -4,67 +4,11 @@ import re
 GOOGLE_MERCATOR = 'EPSG:3857'
 
 
-class GeoJsonChecker:
-
-    def __init__(self, geojson_mask):
-        """
-        """
-        self._geojson_mask = geojson_mask
-
-    def check_geojson_is_valid(self):
-        """
-
-        :return:
-        """
-        if not self._is_geojson:
-            return False
-
-        if not self._is_valid:
-            pass
-
-        if not self._is_polygon:
-            pass
-
-        if not self._bounds_intersect_mbtiles:
-            pass
-
-        return True
-
-    def _is_geojson(self):
-        """
-        """
-        if not self._geojson_mask.endswith('.geojson'):
-            print('Mask file is not a geoJSON')
-            return False
-
-    def _is_valid(self):
-        """
-        """
-        pass
-
-    def _is_polygon(self):
-        """
-        """
-        pass
-
-    def _bounds_intersect_mbtiles(self):
-        """
-        """
-        pass
-
-    def translate_geojson_crs(self):
-        """
-
-        :return:
-        """
-        return self._geojson_mask.to_crs(GOOGLE_MERCATOR)
-
-
 def decode_zxy_string(tile: str) -> tuple:
     """
-
-    :param tile:
-    :return:
+    Decode a string with format z/x/y and return every parameter as an integer
+    :param tile: Tile position, as z/x/y
+    :return: Decoded tile position, with every parameter as an integer
     """
     zxy = tile.split('/')
     z, x, y = int(zxy[0]), int(zxy[1]), int(zxy[2])
@@ -73,9 +17,9 @@ def decode_zxy_string(tile: str) -> tuple:
 
 def zxy_string_is_valid(tile: str) -> bool:
     """
-
-    :param tile:
-    :return:
+    Check if a given tile position, with format z/x/y, is valid
+    :param tile: Tile position, as z/x/y
+    :return: Return a boolean that indicates if the given tile position is valid
     """
     zxy = tile.split('/')
     if len(zxy) != 3:
@@ -90,10 +34,11 @@ def zxy_string_is_valid(tile: str) -> bool:
 
 def tile_zoom_are_valid(zoom: int, tile: str) -> bool:
     """
-
-    :param tile:
-    :param zoom:
-    :return:
+    Check if the user has given a tile position or a zoom, but not both at the same time
+    or none of them
+    :param tile: Tile position, as z/x/y
+    :param zoom: Zoom, as integer
+    :return: Return a boolean that indicates if the user has given the inputs correctly
     """
     if zoom is None and tile is None:
         click.echo('You have to give at least a tile or a zoom level')
@@ -110,17 +55,19 @@ def tile_zoom_are_valid(zoom: int, tile: str) -> bool:
 
 def mbtiles_is_valid(mbtiles: str) -> bool:
     """
-
-    :param mbtiles:
-    :return:
+    Check if a given file is a MBTiles, which is SQLite database
+    :param mbtiles: The file to check if it is a valid MBTiles
+    :return: Return a Boolean that indicates if the file is a valid MBTiles
     """
+    # TODO
     return True
 
 
 def get_shrink_command_options(options: tuple) -> str:
     """
-
-    :return:
+    Wrap the options given to the shrink command into a single string with them,
+    in order to pass it to the tileshrink Docker
+    :return: Return a string containing all the given commands
     """
     command_options = ''
     options_flags = {0: '--extent', 1: '--precision', 2: '--shrink', 3: '--include'}

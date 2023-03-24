@@ -3,8 +3,6 @@ import gzip
 import mapbox_vector_tile
 import click
 
-from typing import Union
-
 from .utils import decode_zxy_string
 
 
@@ -19,26 +17,28 @@ class MVTReader:
         self.conn = self._get_conn()
         self.cur = self._get_cur()
 
-    def _get_conn(self):
+    def _get_conn(self) -> sqlite3.connect:
         """
-
-        :return:
+        Create the SQLite connection
+        :return: SQlite connection
         """
         conn = self._create_connection(self.mbtiles)
         return conn
 
-    def _get_cur(self):
+    def _get_cur(self) -> sqlite3.Cursor:
         """
-
-        :return:
+        Get a SQLite connection cursor
+        :return: SQLite cursor
         """
         return self.conn.cursor()
 
-    def _query(self, sql_query: str, rows: bool = False, index: int = -1):
+    def _query(self, sql_query: str, rows: bool = False, index: int = -1) -> list or None:
         """
-
-        :param sql_query:
-        :return:
+        Run a given SQL query in the MBTiles file
+        :param sql_query: SQL query to run in the MBTiles file
+        :param rows: Boolean that indicates if the response must be a list with all the returned rows
+        :param index: Integer that indicates which of the columns from the response have to be returned
+        :return: Query response from the MBTiles file
         """
         try:
             if rows:
@@ -58,16 +58,16 @@ class MVTReader:
 
     def get_tile_size(self, zxy: str) -> float:
         """
-
-        :param zxy:
-        :return:
+        Get the size in KB of a given tile in the MBTiles
+        :param zxy: Tile position, as z/x/y
+        :return: Size of the given tile, as KB
         """
         z, x, y = decode_zxy_string(zxy)
         tile_exists = self._check_tile_exists(z, x, y)
 
         if not tile_exists:
             self.conn.close()
-            print(f'Error: The given tile at {zxy} does not exists in the MBTiles file')
+            click.echo(f'Error: The given tile at {zxy} does not exists in the MBTiles file')
             return 0
 
         # Get the size in KB
@@ -79,15 +79,15 @@ class MVTReader:
 
     def get_zoom_size(self, z: int) -> float:
         """
-
-        :param z:
-        :return:
+        Get the size in KB of a given zoom in the MBTiles
+        :param z: Zoom to get the zoom of
+        :return: Size of the given zoom, as KB
         """
         zoom_exists = self._check_zoom_exists(z)
 
         if not zoom_exists:
             self.conn.close()
-            print(f'Error: The given zoom {z} does not exists in the MBTiles file')
+            click.echo(f'Error: The given zoom {z} does not exists in the MBTiles file')
             return 0
 
         # Sum the response and get the size in KB
@@ -99,16 +99,17 @@ class MVTReader:
 
     def get_tile(self, zxy: str) -> list or None:
         """
-
-        :param zxy:
-        :return:
+        Get the data associated to a given tile, such as its zoom level, tile column, tile row
+        and the encoded tile data as a Google proto buff
+        :param zxy: Tile position, as z/x/y
+        :return: Data associated to a given tile, with the encoded tile data
         """
         z, x, y = decode_zxy_string(zxy)
         tile_exists = self._check_tile_exists(z, x, y)
 
         if not tile_exists:
             self.conn.close()
-            print(f'Error: The given tile at {zxy} does not exists in the MBTiles file')
+            click.echo(f'Error: The given tile at {zxy} does not exists in the MBTiles file')
             return
 
         query = f'SELECT zoom_level, tile_column, tile_row, tile_data FROM tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y}'
@@ -118,16 +119,17 @@ class MVTReader:
 
     def get_decoded_tile(self, zxy: str) -> list or None:
         """
-
-                :param zxy:
-                :return:
-                """
+        Get the data associated to a given tile, such as its zoom level, tile column, tile row
+        and the decoded tile data as geoJSON
+        :param zxy: Tile position, as z/x/y
+        :return: Data associated to a given tile, with the decoded tile data
+        """
         z, x, y = decode_zxy_string(zxy)
         tile_exists = self._check_tile_exists(z, x, y)
 
         if not tile_exists:
             self.conn.close()
-            print(f'Error: The given tile at {zxy} does not exists in the MBTiles file')
+            click.echo(f'Error: The given tile at {zxy} does not exists in the MBTiles file')
             return
 
         query = f'SELECT zoom_level, tile_column, tile_row, tile_data FROM tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y}'
@@ -137,18 +139,19 @@ class MVTReader:
 
         return decoded_tile
 
-    def get_decoded_zoom(self, z):
+    def get_decoded_zoom(self, z: int) -> list or None:
         """
-
-        :param zoom:
-        :return:
+        Get the data associated to all the tiles in a given tile, such as them zoom level, tile column, tile row,
+        and the decoded tile data as geoJSON
+        :param z: Zoom to get the data of
+        :return: Data associated to all the tiles in a given zoom, with the decoded tile data
         """
         zoom_exists = self._check_zoom_exists(z)
 
         if not zoom_exists:
             self.conn.close()
-            print(f'Error: The given zoom {z} does not exists in the MBTiles file')
-            return 0
+            click.echo(f'Error: The given zoom {z} does not exists in the MBTiles file')
+            return
 
         # Get the decoded tiles from a given zoom
         query = f'SELECT zoom_level, tile_column, tile_row, tile_data FROM tiles WHERE zoom_level={z}'
@@ -161,7 +164,7 @@ class MVTReader:
 
         return decoded_zoom_data
 
-    def get_tiles(self):
+    def get_tiles(self) -> list or None:
         """
         Query and return the features of all the tiles in the MBTiles
 
@@ -184,7 +187,7 @@ class MVTReader:
             click.echo('There is no data in the MBTiles')
             return
 
-    def get_big_tiles(self):
+    def get_big_tiles(self) -> list or None:
         """
         Query and return the features of the big tiles in the MBTiles
 
@@ -239,8 +242,10 @@ class MVTReader:
 
         return decoded_tiles
 
-    def get_metadata(self):
+    def get_metadata(self) -> list or None:
         """
+        Get the info from the metadata table in a MBTiles file
+        :return: MBTiles metadata
         """
         query = 'SELECT name, value FROM metadata'
 
@@ -253,7 +258,7 @@ class MVTReader:
             return
 
     @staticmethod
-    def _create_connection(db_file: str):
+    def _create_connection(db_file: str) -> sqlite3.connect:
         """
         Create a database connection to the SQLite database
         specified by the db_file
@@ -314,9 +319,11 @@ class MVTReader:
 
     def _check_tile_exists(self, z: int, x: int, y: int) -> bool:
         """
-
-        :param:
-        :return:
+        Check if a given tile exists in the MBTiles file
+        :param: z: Zoom level of the given tile
+        :param: x: Tile column of the given tile
+        :param: y: Tile row of the given tile
+        :return: Boolean that indicates if the given tile exists or not
         """
         query = f'SELECT * from tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y};'
 
@@ -328,16 +335,16 @@ class MVTReader:
             else:
                 return False
         except Exception as e:
-            print(e)
+            click.echo(e)
             return False
 
-    def _check_zoom_exists(self, zoom_level: int) -> bool:
+    def _check_zoom_exists(self, z: int) -> bool:
         """
-
-        :param zoom_level:
-        :return:
+        Check if a given zoom exists in a MBTiles file
+        :param z: Zoom level to get if exists or not
+        :return: Boolean that indicates if the given zoom exists or not
         """
-        query = f'SELECT * from tiles WHERE zoom_level={zoom_level} LIMIT 1'
+        query = f'SELECT * from tiles WHERE zoom_level={z} LIMIT 1'
 
         try:
             self.cur.execute(query)
@@ -347,5 +354,5 @@ class MVTReader:
             else:
                 return False
         except Exception as e:
-            print(e)
+            click.echo(e)
             return False

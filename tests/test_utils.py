@@ -9,13 +9,6 @@ def test_decode_zxy_string():
     assert decode_zxy_string('6/10/56') == (6, 10, 56)
 
 
-def test_geojson_checker_is_geojson():
-    """
-    """
-    gj_checker = GeoJsonChecker('sample.shp')
-    assert gj_checker._is_geojson() is False
-
-
 def test_zxy_string_is_valid():
     is_valid = zxy_string_is_valid('a/2/12')
     assert is_valid is False

@@ -8,8 +8,8 @@ from .src.utils import tile_zoom_are_valid, mbtiles_is_valid
 
 @click.command(short_help='Get the size of a given tile or zoom level in a MBTiles file')
 @click.argument('mbtiles', type=click.Path(exists=True), required=True)
-@click.option('-z', '--zoom', type=int)
-@click.option('-t', '--tile', type=str)
+@click.option('-z', '--zoom', type=int, help='Zoom of the MBTiles to get the size of')
+@click.option('-t', '--tile', type=str, help='Tile of the MBTiles to get the size of')
 def size(mbtiles: str, zoom: int, tile: str):
     """Get the size in KB of a given tile or given zoom level.
 

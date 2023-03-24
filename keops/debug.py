@@ -9,8 +9,8 @@ from .src.utils import mbtiles_is_valid
 
 @click.command(short_help='Debug a MBTiles file: get info related with layers and their features in a given MBTiles')
 @click.argument('mbtiles', type=click.Path(exists=True), required=True)
-@click.option('-z', '--zoom', type=int)
-@click.option('-t', '--tile', type=str)
+@click.option('-z', '--zoom', type=int, help='Zoom of the MBTiles to get the size of')
+@click.option('-t', '--tile', type=str, help='Tile of the MBTiles to get the size of')
 def debug(mbtiles: str, zoom: int, tile: str):
     """Debug a MBTiles file: get info related with layers and their features in a given MBTiles.
 
