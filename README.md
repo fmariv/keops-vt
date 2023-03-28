@@ -1,6 +1,6 @@
 # Keops
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-![CI](https://github.com/fmariv/keops-tiles/actions/workflows/test_lint.yaml/badge.svg)
+![CI](https://github.com/fmariv/keops-vt/actions/workflows/test_lint.yaml/badge.svg)
 
 <p align="center">
     <img src="favicon.png" alt="Keops logo">
@@ -18,7 +18,7 @@ _Still in development! The package is not stable yet_
 Keops needs Python 3.7 or higher. The recommended way to install it is via [pip](https://pypi.org/project/keops-tiles/).
 
 ``` 
-pip install keops-tiles
+pip install keops-vt
 ```
 
 If you want to run the ```shrink``` command you also need [Docker](https://www.docker.com/).

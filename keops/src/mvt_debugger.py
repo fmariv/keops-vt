@@ -18,8 +18,8 @@ class MVTDebugger(MVTReader):
         """
         Digest the decoded tile data and return a digerible
         dictionary with it
-        :param: decoded_tile: Decoded vector tile
-        :return: digested_tile_data: Dictionary with the digested tile data
+        :param: decoded_tile: decoded vector tile
+        :return: digested_tile_data: dictionary with the digested tile data
         """
         digested_tile_data = {}
         for layer, layer_data in decoded_tile_data.items():
@@ -38,12 +38,13 @@ class MVTDebugger(MVTReader):
 
     def get_digested_layers_dict(self, decoded_tiles: list) -> list or None:
         """
-
-        :param decoded_tiles:
-        :return:
+        Get a dict with the number of features and vertices of every layer
+        in the MBTiles file.
+        :param decoded_tiles: list of lists of tiles with the zoom level, tile column, tile row and
+        decoded tile data
+        :return: dictionary with the number of features and vertices of every layer
         """
         if decoded_tiles:
-            # Get a dict with the number of features and vertices of every layer
             for tile in decoded_tiles:
                 self.add_tile_layers_to_dict(tile)
             return self.layers_dict
@@ -53,15 +54,16 @@ class MVTDebugger(MVTReader):
 
     def add_tile_layers_to_dict(self, tile: list):
         """
-
-        :param tile:
-        :return:
+        Add the layers and them features and vertices from the given tile
+        to the dict that is going to be returned
+        :param tile: list with the zoom level, tile column, tile row and
+        decoded tile data
         """
         data = tile[3]
         digested_data = self.digest_decoded_tile_data(data)
         for layer, info in digested_data.items():
             if layer in self.layers_dict:
-                # Sum the number of features and vertices to the existing
+                # Sum the number of features and vertices to the existing ones
                 # Get the existing data to sum to the new one
                 existing_layer_data = self.layers_dict.get(layer)
                 existing_n_features = existing_layer_data['n_features']

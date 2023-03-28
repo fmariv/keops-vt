@@ -20,6 +20,7 @@ class MVTReader:
     def _get_conn(self) -> sqlite3.connect:
         """
         Create the SQLite connection
+
         :return: SQlite connection
         """
         conn = self._create_connection(self.mbtiles)
@@ -28,6 +29,7 @@ class MVTReader:
     def _get_cur(self) -> sqlite3.Cursor:
         """
         Get a SQLite connection cursor
+
         :return: SQLite cursor
         """
         return self.conn.cursor()
@@ -35,10 +37,11 @@ class MVTReader:
     def _query(self, sql_query: str, rows: bool = False, index: int = -1) -> list or None:
         """
         Run a given SQL query in the MBTiles file
+
         :param sql_query: SQL query to run in the MBTiles file
-        :param rows: Boolean that indicates if the response must be a list with all the returned rows
-        :param index: Integer that indicates which of the columns from the response have to be returned
-        :return: Query response from the MBTiles file
+        :param rows: boolean that indicates if the response must be a list with all the returned rows
+        :param index: integer that indicates which of the columns from the response have to be returned
+        :return: query response from the MBTiles file
         """
         try:
             if rows:
@@ -59,8 +62,9 @@ class MVTReader:
     def get_tile_size(self, zxy: str) -> float:
         """
         Get the size in KB of a given tile in the MBTiles
-        :param zxy: Tile position, as z/x/y
-        :return: Size of the given tile, as KB
+
+        :param zxy: tile position, as z/x/y
+        :return: size of the given tile, as KB
         """
         z, x, y = decode_zxy_string(zxy)
         tile_exists = self._check_tile_exists(z, x, y)
@@ -80,8 +84,9 @@ class MVTReader:
     def get_zoom_size(self, z: int) -> float:
         """
         Get the size in KB of a given zoom in the MBTiles
-        :param z: Zoom to get the zoom of
-        :return: Size of the given zoom, as KB
+
+        :param z: zoom to get the zoom of
+        :return: size of the given zoom, as KB
         """
         zoom_exists = self._check_zoom_exists(z)
 
@@ -101,8 +106,9 @@ class MVTReader:
         """
         Get the data associated to a given tile, such as its zoom level, tile column, tile row
         and the encoded tile data as a Google proto buff
-        :param zxy: Tile position, as z/x/y
-        :return: Data associated to a given tile, with the encoded tile data
+
+        :param zxy: tile position, as z/x/y
+        :return: data associated to a given tile, with the encoded tile data
         """
         z, x, y = decode_zxy_string(zxy)
         tile_exists = self._check_tile_exists(z, x, y)
@@ -121,8 +127,9 @@ class MVTReader:
         """
         Get the data associated to a given tile, such as its zoom level, tile column, tile row
         and the decoded tile data as geoJSON
-        :param zxy: Tile position, as z/x/y
-        :return: Data associated to a given tile, with the decoded tile data
+
+        :param zxy: tile position, as z/x/y
+        :return: data associated to a given tile, with the decoded tile data
         """
         z, x, y = decode_zxy_string(zxy)
         tile_exists = self._check_tile_exists(z, x, y)
@@ -143,8 +150,9 @@ class MVTReader:
         """
         Get the data associated to all the tiles in a given tile, such as them zoom level, tile column, tile row,
         and the decoded tile data as geoJSON
-        :param z: Zoom to get the data of
-        :return: Data associated to all the tiles in a given zoom, with the decoded tile data
+
+        :param z: zoom to get the data of
+        :return: data associated to all the tiles in a given zoom, with the decoded tile data
         """
         zoom_exists = self._check_zoom_exists(z)
 
@@ -245,6 +253,7 @@ class MVTReader:
     def get_metadata(self) -> list or None:
         """
         Get the info from the metadata table in a MBTiles file
+
         :return: MBTiles metadata
         """
         query = 'SELECT name, value FROM metadata'
@@ -262,8 +271,9 @@ class MVTReader:
         """
         Create a database connection to the SQLite database
         specified by the db_file
+
         :param db_file: database file
-        :return: Connection object or None
+        :return: connection object or None
         """
         conn = None
         try:
@@ -278,8 +288,9 @@ class MVTReader:
         """
         Get the zoom level, tile column and 
         tile row
-        :param: tile: Vector tile object
-        :return: Zoom level, tile column and tile row
+
+        :param: tile: vector tile object
+        :return: zoom level, tile column and tile row
         """
         zxy = (tile[0], tile[1], tile[2])
         return zxy
@@ -289,8 +300,9 @@ class MVTReader:
         """
         Get the zoom level, tile column and tile row
         in string format
-        :param: tile: Vector tile object
-        :return: String with the zoom level, tile column
+
+        :param: tile: vector tile object
+        :return: string with the zoom level, tile column
         and tile row
         """
         zxy = f'{tile[0]}/{tile[1]}/{tile[2]}'
@@ -300,16 +312,18 @@ class MVTReader:
     def _get_tile_data(tile: tuple) -> str:
         """
         Get decompressed tile data
-        :param: tile: Vector tile object
-        :return: Decompressed tile data
+
+        :param: tile: vector tile object
+        :return: decompressed tile data
         """
         return gzip.decompress(tile[3])
 
     def _decode_tile_data(self, tile: tuple) -> dict:
         """
         Get the decoded tile data
-        :param: tile_data: Data in the vector tile
-        :return: Decoded tile data
+
+        :param: tile_data: data in the vector tile
+        :return: decoded tile data
         """
         encoded_tile_data = self._get_tile_data(tile)
         try:
@@ -320,10 +334,11 @@ class MVTReader:
     def _check_tile_exists(self, z: int, x: int, y: int) -> bool:
         """
         Check if a given tile exists in the MBTiles file
-        :param: z: Zoom level of the given tile
-        :param: x: Tile column of the given tile
-        :param: y: Tile row of the given tile
-        :return: Boolean that indicates if the given tile exists or not
+
+        :param: z: zoom level of the given tile
+        :param: x: tile column of the given tile
+        :param: y: tile row of the given tile
+        :return: boolean that indicates if the given tile exists or not
         """
         query = f'SELECT * from tiles WHERE zoom_level={z} AND tile_column={x} AND tile_row={y};'
 
@@ -341,8 +356,9 @@ class MVTReader:
     def _check_zoom_exists(self, z: int) -> bool:
         """
         Check if a given zoom exists in a MBTiles file
-        :param z: Zoom level to get if exists or not
-        :return: Boolean that indicates if the given zoom exists or not
+
+        :param z: zoom level to get if exists or not
+        :return: boolean that indicates if the given zoom exists or not
         """
         query = f'SELECT * from tiles WHERE zoom_level={z} LIMIT 1'
 

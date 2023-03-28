@@ -15,7 +15,7 @@ class MVTEraser(MVTReader):
         """
         Check which is the table with the tile data. Depending on the MBTiles provider, it can be
         'tiles' or 'map'
-        :return: Name of the table that contains the tile data
+        :return: name of the table that contains the tile data
         """
         query = "SELECT name FROM sqlite_master WHERE type='table';"
         self.cur.row_factory = lambda cursor, row: row[0]

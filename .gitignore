@@ -5,6 +5,7 @@ build/
 keops_tiles.egg-info/
 keops.egg-info/
 */__pycache__/
+*/.pytest_cache/
 keops/__pycache__/
 keops/src/__pycache__/
 files/

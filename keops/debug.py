@@ -4,7 +4,7 @@ import click
 
 from .src.mvt_printer import MVTPrinter
 from .src.mvt_debugger import MVTDebugger
-from .src.utils import mbtiles_is_valid
+from .src.utils import mbtiles_is_valid, get_spinner
 
 
 @click.command(short_help='Debug a MBTiles file: get info related with layers and their features in a given MBTiles')
@@ -26,6 +26,8 @@ def debug(mbtiles: str, zoom: int, tile: str):
     mvt_debugger = MVTDebugger(mbtiles)
     decoded, layers_dict = None, None
 
+    spinner = get_spinner('Debugging the MBTiles...')
+    spinner.start()
     if tile is None and zoom is None:
         # Debug the entire MBTiles
         decoded = mvt_debugger.get_decoded_tiles()
@@ -40,6 +42,7 @@ def debug(mbtiles: str, zoom: int, tile: str):
         decoded = mvt_debugger.get_decoded_zoom(zoom)
         layers_dict = mvt_debugger.get_digested_layers_dict(decoded)
 
+    spinner.stop()
     if layers_dict:
         rows = []
         for layer, info in layers_dict.items():
