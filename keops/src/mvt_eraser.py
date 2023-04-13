@@ -61,16 +61,18 @@ class MVTEraser(MVTReader):
         try:
             query = f'SELECT tile_id FROM map WHERE zoom_level={z} AND tile_column={x} AND tile_row={y};'
             self.cur.execute(query)
-            tile_id = self.cur.fetchone()
+            tile_id_ = self.cur.fetchone()
+            tile_id = tile_id_[0]
         except Exception as e:
             click.echo(e)
             return
 
         script = f"""
-            DELETE FROM map WHERE tile_id={tile_id};
-            DELETE FROM images WHERE tile_id={tile_id};
+            DELETE FROM map WHERE tile_id='{tile_id}';
+            DELETE FROM images WHERE tile_id='{tile_id}';
         """
         self.cur.executescript(script)
+        click.echo(f'[>] Tile in {z}/{x}/{y} erased successfully!')
 
     def erase_tile(self, zxy: str):
         """
