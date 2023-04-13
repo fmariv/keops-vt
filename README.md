@@ -6,12 +6,9 @@
     <img src="favicon.png" alt="Keops logo">
 </p>
 
-Keops is a CLI tool that allows you to apply some logic to vector tiles in an MBTiles, such as clipping by a GeoJSON mask, size optimization by removing unnecessary feautures in a given GL style, and much more.
+Keops is a CLI tool that allows you to apply some logic to vector tiles in a MBTiles file, such as removing or getting the size of a given tile, obtaining the vector layers that conform the MBTiles or shrinking the vector data, in order to reduce the data size.
 
-Read the documentation for more details: [keops.franmartin.es](https://keops.franmartin.es/).
-
-
-_Still in development! The package is not stable yet_
+Read the full documentation for more details: [keops.franmartin.es](https://keops.franmartin.es/).
 
 ## Installation
 
@@ -31,7 +28,7 @@ The usage is pretty simple and straigthforward. For instance, if you want to dro
 keops erase input.mbtiles 6/10/23
 ```
 
-Keops have some more functionalities. To check them, simply execute ```keops``` or ```keops --help``` in your bash
+Keops have some more functionalities. To check them, simply execute ```keops``` or ```keops --help``` in your bash.
 
 ```bash
 Usage: keops [OPTIONS] COMMAND [ARGS]...
@@ -42,19 +39,27 @@ Options:
   --help  Show this message and exit.
  
 Commands:
-  clip    Clip vector tiles to given geoJSON
+  debug   Debug a MBTiles file: get info related with layers and their
+          features in a given MBTiles
   erase   Erase a tile in a MBTiles file
-  info    Get info related with layers and their features of a given tile or
-          zoom level in a MBTiles file
+  info    Extract and print the metadata info from a MBTiles file
   shrink  Reduce and simplify all features of all or any vector tiles in a
           MBTiles container. Docker required.
   size    Get the size of a given tile or zoom level in a MBTiles file
 
+
 ```
 
-## Author
+## Roadmap
 
-Fran Martín
+If you are interested on the roadmap of the project, check the [ROADMAP](ROADMAP.md) file.
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
+
+## Credits
+
+The merit of the shrink module belongs entirely to [rastapasta](https://github.com/rastapasta/tileshrink), as the unique developer of tileshrink,
+and [ooZberg](https://github.com/ooZberg), as the person who wrapped it in a Docker image in order to use it without worrying
+about the Node.js version. What I have done is creating a backup of the Docker image and 
+wrapping it again in this package, so it can be used in a focused environment.
