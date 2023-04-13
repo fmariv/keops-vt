@@ -1,15 +1,13 @@
 # Keops: tile pyramid management
 
-Keops is a CLI tool that allows you to apply some logic to vector tiles in an MBTiles, such as clipping by a GeoJSON mask, size optimization by removing unnecessary feautures in a given GL style, and much more.
-
-Read the documentation for more details: [keops.franmartin.es](https://keops.franmartin.es/).
+Keops is a CLI tool that allows you to apply some logic to vector tiles in a MBTiles file, such as removing or getting the size of a given tile, obtaining the vector layers that conform the MBTiles or shrinking the vector data, in order to reduce the data size.
 
 ## Installation
 
 Keops needs Python 3.7 or higher. The recommended way to install it is via [pip](https://pypi.org/project/keops-tiles/).
 
 ``` 
-pip install keops-tiles
+pip install keops-vt
 ```
 
 If you want to run the ```shrink``` command you also need [Docker](https://www.docker.com/).
@@ -27,10 +25,10 @@ Options:
   --help  Show this message and exit.
 
 Commands:
-  clip    Clip vector tiles to given geoJSON
+  debug   Debug a MBTiles file: get info related with layers and their
+          features in a given MBTiles
   erase   Erase a tile in a MBTiles file
-  info    Get info related with layers and their features of a given tile or
-          zoom level in a MBTiles file
+  info    Extract and print the metadata info from a MBTiles file
   shrink  Reduce and simplify all features of all or any vector tiles in a
           MBTiles container. Docker required.
   size    Get the size of a given tile or zoom level in a MBTiles file
@@ -85,10 +83,12 @@ keops info --zoom 10 input.mbtiles
 keops info --tile 10/56/65 input.mbtiles
 ```
 
-### Clip
+### Debug
 
-The ```clip``` command clips vector tiles in a MBTiles using a geoJSON file as a mask.
+The ```debug``` command gets info related with layers and their features in a given MBTiles.
 
 ```
-keops clip input.mbtiles bounds.geojson
+$ keops debug input.mbtiles
+$ keops debug --zoom 10 input.mbtiles
+$ keops debug --tile 10/56/65 input.mbtiles
 ```
