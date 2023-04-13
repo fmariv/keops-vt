@@ -29,7 +29,7 @@ dependencies = [
     "mkdocs==1.4.1",
     "mkdocs-material==9.1.0",
     "prettytable==3.6.0",
-    "halo==0.0.31
+    "halo==0.0.31"
 ]
 
 [project.scripts]
