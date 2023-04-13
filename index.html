@@ -309,8 +309,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#clip" class="md-nav__link">
-    Clip
+  <a href="#debug" class="md-nav__link">
+    Debug
   </a>
   
 </li>
@@ -418,8 +418,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#clip" class="md-nav__link">
-    Clip
+  <a href="#debug" class="md-nav__link">
+    Debug
   </a>
   
 </li>
@@ -448,11 +448,10 @@
 
 
 <h1 id="keops-tile-pyramid-management">Keops: tile pyramid management</h1>
-<p>Keops is a CLI tool that allows you to apply some logic to vector tiles in an MBTiles, such as clipping by a GeoJSON mask, size optimization by removing unnecessary feautures in a given GL style, and much more.</p>
-<p>Read the documentation for more details: http://keops.franmartin.es/.</p>
+<p>Keops is a CLI tool that allows you to apply some logic to vector tiles in a MBTiles file, such as removing or getting the size of a given tile, obtaining the vector layers that conform the MBTiles or shrinking the vector data, in order to reduce the data size.</p>
 <h2 id="installation">Installation</h2>
 <p>Keops needs Python 3.7 or higher. The recommended way to install it is via <a href="https://pypi.org/project/keops-tiles/">pip</a>.</p>
-<pre><code>pip install keops-tiles
+<pre><code>pip install keops-vt
 </code></pre>
 <p>If you want to run the <code>shrink</code> command you also need <a href="https://www.docker.com/">Docker</a>.</p>
 <h2 id="commands">Commands</h2>
@@ -465,10 +464,10 @@ Options:
   --help  Show this message and exit.
 
 Commands:
-  clip    Clip vector tiles to given geoJSON
+  debug   Debug a MBTiles file: get info related with layers and their
+          features in a given MBTiles
   erase   Erase a tile in a MBTiles file
-  info    Get info related with layers and their features of a given tile or
-          zoom level in a MBTiles file
+  info    Extract and print the metadata info from a MBTiles file
   shrink  Reduce and simplify all features of all or any vector tiles in a
           MBTiles container. Docker required.
   size    Get the size of a given tile or zoom level in a MBTiles file
@@ -501,9 +500,11 @@ run the Docker image</p>
 <pre><code>keops info --zoom 10 input.mbtiles
 keops info --tile 10/56/65 input.mbtiles
 </code></pre>
-<h3 id="clip">Clip</h3>
-<p>The <code>clip</code> command clips vector tiles in a MBTiles using a geoJSON file as a mask.</p>
-<pre><code>keops clip input.mbtiles bounds.geojson
+<h3 id="debug">Debug</h3>
+<p>The <code>debug</code> command gets info related with layers and their features in a given MBTiles.</p>
+<pre><code>$ keops debug input.mbtiles
+$ keops debug --zoom 10 input.mbtiles
+$ keops debug --tile 10/56/65 input.mbtiles
 </code></pre>
 
 
